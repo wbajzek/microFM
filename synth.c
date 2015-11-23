@@ -1,9 +1,6 @@
-/* Blinker Demo */
-
-// ------- Preamble -------- //
-#include <avr/io.h>                        /* Defines pins, ports, etc */
-#include <avr/interrupt.h>                        /* Defines pins, ports, etc */
-#include <util/delay.h>                     /* Functions to waste time */
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
 #include "wavetables/SineWaveTable.h"
 #include <math.h>
 
@@ -23,11 +20,12 @@ int main(void) {
   DDRD |= 0b0001110;
   DDRC |= 0b1111111; // DAC outs
 
+  // setup timer
   TCCR0 |= (1 << CS00);
   TCCR0 &= ~(1 << CS01);
   TCCR0 &= ~(1 << CS02);
-
   TCNT0 = 0;
+
   while (1) {
     if (TCNT0 >= clock_divider) {
       TCNT0 = 0;
@@ -41,6 +39,6 @@ int main(void) {
       if ((index_wt += index_wt_increment) >= table_length)
         index_wt -= table_length;
     }
-  }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  }
+  return (0);
 }
