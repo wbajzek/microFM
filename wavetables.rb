@@ -19,7 +19,7 @@ HEADER
   phase = 0.0
   phase_increment = 2.0 * Math::PI / wavetable_length
   wavetable_length.to_i.times do
-    f.write "#{ 1.0 + Math::sin(phase) },\n"
+    f.write "#{ (1.0 + Math::sin(phase)) * 128.0 },\n"
     phase += phase_increment
   end
   f.write "};\n"
