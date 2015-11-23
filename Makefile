@@ -182,7 +182,7 @@ set_default_fuses:  fuses
 
 ## Set the fuse byte for full-speed mode
 ## Note: can also be set in firmware for modern chips
-set_fast_fuse: LFUSE = 0xE2
+set_fast_fuse: LFUSE = 0xBF
 set_fast_fuse: FUSE_STRING = -U lfuse:w:$(LFUSE):m
 set_fast_fuse: fuses
 
