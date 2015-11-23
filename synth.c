@@ -13,7 +13,7 @@ float freq = 440.0;
 float freq_ti;
 
 int main(void) {
-  sample_rate = F_CPU / clock_divider / 16; // why divide by 16?
+  sample_rate = F_CPU / clock_divider;
   freq_ti = table_length / sample_rate;
   index_wt_increment = freq_ti * freq;
 
