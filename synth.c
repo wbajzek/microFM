@@ -7,15 +7,33 @@
 float index_wt = 0.0;
 float index_wt_increment = 1.0;
 int table_length = 256;
-int clock_divider = 44;
-float sample_rate;
-float freq = 440.0;
+int clock_divider = 100;
+float sample_rate = 25100;
 float freq_ti;
 
+void set_note(float frequency) {
+  index_wt_increment = freq_ti * frequency;
+}
+
+int calculate_sample() {
+  if ((index_wt += index_wt_increment) >= table_length)
+    index_wt -= table_length;
+
+  // why do I have to scale this down to avoid clipping?
+  return (sineWaveTable[ (int)index_wt ]) * 0.49;
+}
+
+void update_dac(int sample) {
+  PORTD |= (1 << PIND3); // set DAC write pin high for writing
+  PORTD &= ~(1 << PIND2); // select DAC A
+  PORTC = sample;
+  PORTD &= ~(1 << PIND3); // set DAC write pin low to trigger output
+  PORTD |= (1 << PIND3); // set it high again because that's what the micro does?
+
+}
+
 int main(void) {
-  sample_rate = 27885;
   freq_ti = table_length / sample_rate;
-  index_wt_increment = freq_ti * freq;
 
   DDRD |= 0b0001110;
   DDRC |= 0b1111111; // DAC outs
@@ -26,19 +44,13 @@ int main(void) {
   TCCR0 &= ~(1 << CS02);
   TCNT0 = 0;
 
+  set_note(440.0);
+
   while (1) {
     if (TCNT0 >= clock_divider) {
       TCNT0 = 0;
 
-      PORTD |= (1 << PIND3); // set DAC write pin high for writing
-      PORTD &= ~(1 << PIND2); // select DAC A
-      // why do I have to scale this down to avoid clipping?
-      PORTC = (sineWaveTable[ (int)index_wt ]) * 0.49;
-      PORTD &= ~(1 << PIND3); // set DAC write pin low to trigger output
-      PORTD |= (1 << PIND3); // set it high again because that's what the micro does?
-
-      if ((index_wt += index_wt_increment) >= table_length)
-        index_wt -= table_length;
+      update_dac(calculate_sample());
     }
   }
   return (0);
