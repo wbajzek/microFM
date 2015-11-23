@@ -7,13 +7,13 @@
 float index_wt = 0.0;
 float index_wt_increment = 1.0;
 int table_length = 256;
-int clock_divider = 36;
+int clock_divider = 44;
 float sample_rate;
 float freq = 440.0;
 float freq_ti;
 
 int main(void) {
-  sample_rate = F_CPU / clock_divider;
+  sample_rate = 27885;
   freq_ti = table_length / sample_rate;
   index_wt_increment = freq_ti * freq;
 
