@@ -25,7 +25,6 @@ int calculate_sample() {
 
 void update_dac(int sample) {
   PORTD |= (1 << PIND3); // set DAC write pin high for writing
-  PORTD &= ~(1 << PIND2); // select DAC A
   PORTC = sample;
   PORTD &= ~(1 << PIND3); // set DAC write pin low to trigger output
   PORTD |= (1 << PIND3); // set it high again because that's what the micro does?
@@ -40,6 +39,7 @@ int main(void) {
 
   DDRD |= 0b0001110;
   DDRC |= 0b1111111; // DAC outs
+  PORTD &= ~(1 << PIND2); // select DAC A
 
   // setup timer
   TCCR0 |= (1 << CS01);
