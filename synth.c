@@ -19,8 +19,7 @@ int calculate_sample() {
   if ((index_wt += index_wt_increment) >= table_length)
     index_wt -= table_length;
 
-  // why do I have to scale this down to avoid clipping?
-  return (sineWaveTable[ (int)index_wt ]) * 0.49;
+  return (1.0 + sineWaveTable[ (int)index_wt ]) * 63;
 }
 
 void update_dac(int sample) {
