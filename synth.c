@@ -27,7 +27,7 @@ void update_dac(int sample) {
   PORTD |= (1 << PIND3); // set DAC write pin high for writing
   PORTC = sample;
   PORTD &= ~(1 << PIND3); // set DAC write pin low to trigger output
-  PORTD |= (1 << PIND3); // set it high again because that's what the micro does?
+}
 
 ISR(TIMER1_COMPA_vect) {
   update_dac(calculate_sample());
