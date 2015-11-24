@@ -7,7 +7,7 @@
 float index_wt = 0.0;
 float index_wt_increment = 1.0;
 int table_length = 256;
-int clock_divider = 50;
+int clock_divider = 400;
 float sample_rate;
 float freq_ti;
 
@@ -29,10 +29,12 @@ void update_dac(int sample) {
   PORTD &= ~(1 << PIND3); // set DAC write pin low to trigger output
   PORTD |= (1 << PIND3); // set it high again because that's what the micro does?
 
+ISR(TIMER1_COMPA_vect) {
+  update_dac(calculate_sample());
 }
 
 int main(void) {
-  float sample_rate = F_CPU / (clock_divider * 8);
+  float sample_rate = F_CPU / clock_divider;
   freq_ti = table_length / sample_rate;
 
   set_note(440.0);
@@ -42,17 +44,16 @@ int main(void) {
   PORTD &= ~(1 << PIND2); // select DAC A
 
   // setup timer
-  TCCR0 |= (1 << CS01);
-  TCCR0 &= ~(1 << CS00);
-  TCCR0 &= ~(1 << CS02);
-  TCNT0 = 0;
+  TCCR1B |= (1 << WGM12);
+  TCCR1B |= (1 << CS10);
+  TCCR1B &= ~(1 << CS11);
+  TCCR1B &= ~(1 << CS12);
+  TIMSK |= (1 << OCIE1A);
+  OCR1A = clock_divider - 1;
+
+  sei();
 
   while (1) {
-    if (TCNT0 >= clock_divider) {
-      TCNT0 = 0;
-
-      update_dac(calculate_sample());
-    }
   }
   return (0);
 }
